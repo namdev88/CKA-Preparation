@@ -1,4 +1,4 @@
-# CKA-Preparation
+# CKA Preparation
 
 Kubernetes task important notes
 
