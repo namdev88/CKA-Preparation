@@ -1,0 +1,195 @@
+
+|||Manage Memory, CPU, and API Resources
+
+####Configure Default Memory Requests and Limits for a Namespace
+
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    defaultRequest:
+      memory: 256Mi
+    type: Container
+
+####Configure Minimum and Maximum Memory Constraints for a Namespace
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-min-max-demo-lr
+spec:
+  limits:
+  - max:
+      memory: 1Gi
+    min:
+      memory: 500Mi
+    type: Container
+
+(in above case if you only provide min and max , defaultrequest and default memory limit will come automatically and takes value of max)
+
+
+
+####Configure Default CPU Requests and Limits for a Namespace
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-limit-range
+spec:
+  limits:
+  - default:
+      cpu: 1
+    defaultRequest:
+      cpu: 0.5
+    type: Container
+
+
+
+####Configure Minimum and Maximum CPU Constraints for a Namespace
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-min-max-demo-lr
+spec:
+  limits:
+  - max:
+      cpu: "800m"
+    min:
+      cpu: "200m"
+    type: Container
+
+//Pod//
+
+containers:
+  limits:
+  - default:
+      memory: 1Gi
+    defaultRequest:
+      memory: 1Gi
+    max:
+      memory: 1Gi
+    min:
+      memory: 500Mi
+    type: Container
+    
+	
+####Limit Storage Consumption
+
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: storagelimits
+spec:
+  limits:
+  - type: PersistentVolumeClaim
+    max:
+      storage: 2Gi
+    min:
+      storage: 1Gi
+
+
+	
+	
+	
+	
+####Configure Memory and CPU Quotas for a Namespace
+
+quotas for the total amount memory and CPU that can be used by all Containers running in a namespace
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-cpu-demo
+spec:
+  hard:
+    requests.cpu: "1"
+    requests.memory: 1Gi
+    limits.cpu: "2"
+    limits.memory: 2Gi
+
+
+
+####Configure a Pod Quota for a Namespace
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: pod-demo
+spec:
+  hard:
+    pods: "2"
+
+
+####Configure Quotas for API Objects
+
+ for API objects, including PersistentVolumeClaims and Services
+
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: object-quota-demo
+spec:
+  hard:
+    persistentvolumeclaims: "1"
+    services.loadbalancers: "2"
+    services.nodeports: "0"
+
+
+Resource quota tracks aggregate usage of resources in the Namespace and allows cluster operators to define Hard resource usage limits that a Namespace may consume.
+
+A limit range defines min/max constraints on the amount of resources a single entity can consume in a Namespace.
+
+
+
+
+
+####Operating etcd clusters for Kubernetes
+
+
+
+For single master node
+
+$ ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \
+  --name m1 \
+  --initial-cluster m1=http://host1:2380 \
+  --initial-cluster-token etcd-cluster-1 \
+  --initial-advertise-peer-urls http://host1:2380
+
+
+etcd \
+  --name m1 \
+  --listen-client-urls http://host1:2379 \
+  --advertise-client-urls http://host1:2379 \
+  --listen-peer-urls http://host1:2380
+
+
+Replace host1 with address 
+
+
+
+####Using sysctls in a Kubernetes Cluster
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sysctl-example
+spec:
+  securityContext:
+    sysctls:
+    - name: kernel.shm_rmid_forced
+      value: "0"
+    - name: net.core.somaxconn
+      value: "1024"
+    - name: kernel.msgmax
+      value: "65536"
+  ...
+
+
+  
+  
