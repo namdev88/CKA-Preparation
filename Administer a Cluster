@@ -151,25 +151,44 @@ A limit range defines min/max constraints on the amount of resources a single en
 
 ####Operating etcd clusters for Kubernetes
 
+use --help
+
+snapshot save
+
+vagrant@kubemaster:~$ etcdctl --version
+etcdctl version: 3.2.17
+API version: 2
+vagrant@kubemaster:~$ export ETCDCTL_API=3
+vagrant@kubemaster:~$ etcdctl snapshot save --help
+NAME:
+        snapshot save - Stores an etcd node backend snapshot to a given file
+
+USAGE:
+        etcdctl snapshot save <filename> [flags]
+
+OPTIONS:
+  -h, --help[=false]    help for save
+
+GLOBAL OPTIONS:
+      `--cacert=""                               verify certificates of TLS-enabled secure servers using this CA bundle`
+      `--cert=""                                 identify secure client using this TLS certificate file`
+      --command-timeout=5s                      timeout for short running command (excluding dial timeout)
+      --debug[=false]                           enable client-side debug logging
+      --dial-timeout=2s                         dial timeout for client connections
+      `--endpoints=[127.0.0.1:2379]              gRPC endpoints`
+      --hex[=false]                             print byte strings as hex encoded strings
+      --insecure-skip-tls-verify[=false]        skip server certificate verification
+      --insecure-transport[=true]               disable transport security for client connections
+      `--key=""                                  identify secure client using this TLS key file`
+      --user=""                                 username[:password] for authentication (prompt if password is not supplied)
+  -w, --write-out="simple"                      set the output format (fields, json, protobuf, simple, table)
+
+vagrant@kubemaster:~$
 
 
-For single master node
-
-$ ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \
-  --name m1 \
-  --initial-cluster m1=http://host1:2380 \
-  --initial-cluster-token etcd-cluster-1 \
-  --initial-advertise-peer-urls http://host1:2380
+sanapshot restore
 
 
-etcd \
-  --name m1 \
-  --listen-client-urls http://host1:2379 \
-  --advertise-client-urls http://host1:2379 \
-  --listen-peer-urls http://host1:2380
-
-
-Replace host1 with address 
 
 
 
